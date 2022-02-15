@@ -10,40 +10,40 @@ type Folder = {
 
 type File = { id: string; name: string };
 
-export default function move(list: List, source: string, destination: string): List {
+export default function move(list: List, sourceFileId: string, destinationFolderId: string): List {
   if (!list.length) {
-    throw new Error('Folders are empty!');
+    throw new Error('List is empty');
   }
 
-  if (!source) {
-    throw new Error('Invalid file id');
+  if (!sourceFileId) {
+    throw new Error('Invalid source file id');
   }
 
-  if (!destination) {
+  if (!destinationFolderId) {
     throw new Error('Invalid destination folder id');
   }
 
-  let fileFolderIndex = '';
-  let fileIndex = '';
+  let sourceFolderIndex = '';
+  let sourceFileIndex = '';
   let destinationFolderIndex = '';
 
   const newList = list.map((folder, folderIndex) => {
-    if (source === folder.id) {
+    if (sourceFileId === folder.id) {
       throw new Error('You cannot move a folder');
     }
 
-    if (!destinationFolderIndex && folder.id === destination) {
+    if (!destinationFolderIndex && folder.id === destinationFolderId) {
       destinationFolderIndex = `${folderIndex}`;
     }
 
-    const newFiles = folder.files.filter((file, _fileIndex) => {
-      if (destination === file.id) {
+    const newFiles = folder.files.filter((file, fileIndex) => {
+      if (destinationFolderId === file.id) {
         throw new Error('You cannot specify a file as the destination');
       }
 
-      if (file.id === source) {
-        fileFolderIndex = `${folderIndex}`;
-        fileIndex = `${_fileIndex}`;
+      if (file.id === sourceFileId) {
+        sourceFolderIndex = `${folderIndex}`;
+        sourceFileIndex = `${fileIndex}`;
 
         return false;
       }
@@ -56,7 +56,7 @@ export default function move(list: List, source: string, destination: string): L
       throw new Error("Destination folder doesn't exist");
     }
 
-    if (isLastFolder && !fileIndex) {
+    if (isLastFolder && !sourceFileIndex) {
       throw new Error("File doesn't exist");
     }
 
@@ -66,7 +66,7 @@ export default function move(list: List, source: string, destination: string): L
   });
 
   newList[Number(destinationFolderIndex)].files.push(
-    list[Number(fileFolderIndex)].files[Number(fileIndex)],
+    list[Number(sourceFolderIndex)].files[Number(sourceFileIndex)],
   );
 
   return newList;
