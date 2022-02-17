@@ -11,10 +11,6 @@ type Folder = {
 type File = { id: string; name: string };
 
 export default function move(list: List, sourceFileId: string, destinationFolderId: string): List {
-  if (!list.length) {
-    throw new Error('List is empty');
-  }
-
   if (!sourceFileId) {
     throw new Error('Invalid source file id');
   }
@@ -28,6 +24,7 @@ export default function move(list: List, sourceFileId: string, destinationFolder
   let destinationFolderIndex = '';
 
   const newList = list.map((folder, folderIndex) => {
+    // instead of id checking, type checking would be better
     if (sourceFileId === folder.id) {
       throw new Error('You cannot move a folder');
     }
@@ -37,6 +34,7 @@ export default function move(list: List, sourceFileId: string, destinationFolder
     }
 
     const newFiles = folder.files.filter((file, fileIndex) => {
+      // instead of id checking, type checking would be better
       if (destinationFolderId === file.id) {
         throw new Error('You cannot specify a file as the destination');
       }
@@ -44,6 +42,10 @@ export default function move(list: List, sourceFileId: string, destinationFolder
       if (file.id === sourceFileId) {
         sourceFolderIndex = `${folderIndex}`;
         sourceFileIndex = `${fileIndex}`;
+
+        if (sourceFolderIndex === destinationFolderIndex) {
+          throw new Error('Source file is already placed at destination');
+        }
 
         return false;
       }
@@ -53,21 +55,19 @@ export default function move(list: List, sourceFileId: string, destinationFolder
     const isLastFolder = folderIndex === list.length - 1;
 
     if (isLastFolder && !destinationFolderIndex) {
-      throw new Error("Destination folder doesn't exist");
+      throw new Error('Destination folder does not exist');
     }
 
     if (isLastFolder && !sourceFileIndex) {
-      throw new Error("File doesn't exist");
+      throw new Error('Source file does not exist');
     }
 
-    const newFolder: Folder = { ...folder, files: newFiles };
-
-    return newFolder;
+    return { ...folder, files: newFiles };
   });
 
-  newList[Number(destinationFolderIndex)].files.push(
-    list[Number(sourceFolderIndex)].files[Number(sourceFileIndex)],
-  );
+  const sourceFile = list[Number(sourceFolderIndex)].files[Number(sourceFileIndex)];
+
+  newList[Number(destinationFolderIndex)].files.push(sourceFile);
 
   return newList;
 }

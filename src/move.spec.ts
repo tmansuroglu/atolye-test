@@ -68,4 +68,69 @@ describe('move', () => {
 
     expect(() => move(list, '2', '4')).toThrow('You cannot specify a file as the destination');
   });
+
+  it('throws error if source is invalid', () => {
+    const list = [
+      {
+        id: '1',
+        name: 'Folder 1',
+        files: [{ id: '2', name: 'File 1' }],
+      },
+      { id: '3', name: 'Folder 2', files: [{ id: '4', name: 'File 2' }] },
+    ];
+
+    expect(() => move(list, '', '4')).toThrow('Invalid source file id');
+  });
+
+  it('throws error if destination is invalid', () => {
+    const list = [
+      {
+        id: '1',
+        name: 'Folder 1',
+        files: [{ id: '2', name: 'File 1' }],
+      },
+      { id: '3', name: 'Folder 2', files: [{ id: '4', name: 'File 2' }] },
+    ];
+
+    expect(() => move(list, '2', '')).toThrow('Invalid destination folder id');
+  });
+
+  it('throws error if source file is already placed at the destination', () => {
+    const list = [
+      {
+        id: '1',
+        name: 'Folder 1',
+        files: [{ id: '2', name: 'File 1' }],
+      },
+      { id: '3', name: 'Folder 2', files: [{ id: '4', name: 'File 2' }] },
+    ];
+
+    expect(() => move(list, '2', '1')).toThrow('Source file is already placed at destination');
+  });
+
+  it('throws error if source file does not exist', () => {
+    const list = [
+      {
+        id: '1',
+        name: 'Folder 1',
+        files: [{ id: '2', name: 'File 1' }],
+      },
+      { id: '3', name: 'Folder 2', files: [{ id: '4', name: 'File 2' }] },
+    ];
+
+    expect(() => move(list, '10', '1')).toThrow('Source file does not exist');
+  });
+
+  it('throws error if destination folder does not exist', () => {
+    const list = [
+      {
+        id: '1',
+        name: 'Folder 1',
+        files: [{ id: '2', name: 'File 1' }],
+      },
+      { id: '3', name: 'Folder 2', files: [{ id: '4', name: 'File 2' }] },
+    ];
+
+    expect(() => move(list, '2', '10')).toThrow('Destination folder does not exist');
+  });
 });
