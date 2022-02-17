@@ -24,7 +24,6 @@ export default function move(list: List, sourceFileId: string, destinationFolder
   let destinationFolderIndex = '';
 
   const newList = list.map((folder, folderIndex) => {
-    // instead of id checking, type checking would be better
     if (sourceFileId === folder.id) {
       throw new Error('You cannot move a folder');
     }
@@ -34,7 +33,6 @@ export default function move(list: List, sourceFileId: string, destinationFolder
     }
 
     const newFiles = folder.files.filter((file, fileIndex) => {
-      // instead of id checking, type checking would be better
       if (destinationFolderId === file.id) {
         throw new Error('You cannot specify a file as the destination');
       }
